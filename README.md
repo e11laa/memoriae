@@ -26,9 +26,10 @@ The resulting plugin bundle is placed under `target/<profile>/`. You can copy th
 #### If `nih_plug` cannot be found on Windows
 - Make sure Git is installed (the dependency is pulled directly from the upstream repository).
 - Update to the latest stable Rust (1.75+).
-- Clear any legacy vendored `~/.cargo/config` that overrides the crates.io source, then run:
+- Clear any legacy vendored `~/.cargo/config` that overrides the crates.io source.
+- If resolution still fails, ensure `Cargo.toml` keeps `nih_plug` as a git dependency, then run `cargo update` before rebuilding:
   ```powershell
-  cargo update -p nih_plug --precise 0.11.0
+  cargo update
   cargo build --release --target x86_64-pc-windows-msvc
   ```
   The repository-pinned dependency in `Cargo.toml` avoids the "no matching package named `nih_plug` found" registry error.
