@@ -23,6 +23,16 @@ Requires Rust 1.75+ and Cargo.
 
 The resulting plugin bundle is placed under `target/<profile>/`. You can copy the `.vst3` bundle into your VST3 directory or load the CLAP binary with a compatible host.
 
+#### If `nih_plug` cannot be found on Windows
+- Make sure Git is installed (the dependency is pulled directly from the upstream repository).
+- Update to the latest stable Rust (1.75+).
+- Clear any legacy vendored `~/.cargo/config` that overrides the crates.io source, then run:
+  ```powershell
+  cargo update -p nih_plug --precise 0.11.0
+  cargo build --release --target x86_64-pc-windows-msvc
+  ```
+  The repository-pinned dependency in `Cargo.toml` avoids the "no matching package named `nih_plug` found" registry error.
+
 ### Notes on linker stability
 - The DSP uses only Rust standard library math; no platform-specific intrinsics are required.
 - The crate type includes `cdylib` to ensure the correct exports for plugin formats.
