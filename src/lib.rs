@@ -1,5 +1,5 @@
 use nih_plug::prelude::*;
-use std::sync::Arc;
+use std::{num::NonZeroU32, sync::Arc};
 
 /// A gentle tone-shaper that blends a smoothed tilt filter with a clean dry path.
 /// The design keeps CPU usage low and avoids external dependencies so it is easy
@@ -70,15 +70,14 @@ impl Plugin for QuietTexture {
     const EMAIL: &'static str = "support@example.com";
 
     const VERSION: &'static str = env!("CARGO_PKG_VERSION");
-    const DEFAULT_AUDIO_IO: AudioIOLayout = AudioIOLayout {
+    const AUDIO_IO_LAYOUTS: &'static [AudioIOLayout] = &[AudioIOLayout {
         main_input_channels: NonZeroU32::new(2),
         main_output_channels: NonZeroU32::new(2),
         ..AudioIOLayout::const_default()
-    };
+    }];
 
     const MIDI_INPUT: MidiConfig = MidiConfig::None;
     const SAMPLE_ACCURATE_AUTOMATION: bool = true;
-    const STABILIZER: Stabilizer = Stabilizer::new(1.0, 0.01);
 
     type BackgroundTask = ();
     type SysExMessage = ();
@@ -89,10 +88,12 @@ impl Plugin for QuietTexture {
 
     fn initialize(
         &mut self,
+        _bus_config: &BusConfig,
+        _buffer_config: &BufferConfig,
         _context: &mut impl InitContext<Self>,
-    ) -> Result<(), nih_plug::prelude::PluginError> {
+    ) -> bool {
         self.tilt_state = 0.0;
-        Ok(())
+        true
     }
 
     fn reset(&mut self) {
@@ -102,6 +103,7 @@ impl Plugin for QuietTexture {
     fn process(
         &mut self,
         buffer: &mut Buffer,
+        _aux: &mut AuxiliaryBuffers,
         _context: &mut impl ProcessContext<Self>,
     ) -> ProcessStatus {
         let gain = self.params.gain.smoothed.next();
@@ -136,15 +138,13 @@ impl ClapPlugin for QuietTexture {
     const CLAP_ID: &'static str = "com.memoriae.quiet_texture";
     const CLAP_DESCRIPTION: Option<&'static str> =
         Some("A gentle tilt and gain tool for quick tone shaping.");
-    const CLAP_FEATURES: &'static [ClapFeature] = &[
-        ClapFeature::Effect,
-        ClapFeature::Stereo,
-        ClapFeature::Mastering,
-    ];
+    const CLAP_MANUAL_URL: Option<&'static str> = None;
+    const CLAP_SUPPORT_URL: Option<&'static str> = None;
+    const CLAP_FEATURES: &'static [ClapFeature] = &[];
 }
 
 impl Vst3Plugin for QuietTexture {
-    const VST3_CLASS_ID: [u8; 16] = *b"QuietTextureMem";
+    const VST3_CLASS_ID: [u8; 16] = *b"QuietTextureMem\0";
     const VST3_SUBCATEGORIES: &'static [Vst3SubCategory] =
         &[Vst3SubCategory::Fx, Vst3SubCategory::Mastering];
 }
