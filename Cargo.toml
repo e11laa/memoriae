@@ -1,0 +1,15 @@
+[package]
+name = "memoriae"
+version = "0.1.0"
+edition = "2024"
+authors = ["Memoriae Labs <support@example.com>"]
+description = "Quiet Texture VST3/CLAP tone-shaping plugin"
+license = "MIT"
+
+[lib]
+name = "memoriae"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# Use the upstream repository to avoid registry resolution issues (e.g. "no matching package named `nih_plug` found").
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git" }
