@@ -1,0 +1,14 @@
+[package]
+name = "memoriae"
+version = "0.1.0"
+edition = "2024"
+authors = ["Memoriae Labs <support@example.com>"]
+description = "Quiet Texture VST3/CLAP tone-shaping plugin"
+license = "MIT"
+
+[lib]
+name = "memoriae"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+nih_plug = { version = "0.11", features = ["clap", "vst3"] }
